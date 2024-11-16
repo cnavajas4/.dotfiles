@@ -1,5 +1,5 @@
 -- Install packer.nvim if not already installed
-local ensure_packer = function()
+local ensure_packer = function(vim)
     local fn = vim.fn
     local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
     if fn.empty(fn.glob(install_path)) > 0 then
@@ -8,15 +8,22 @@ local ensure_packer = function()
     end
 end
 
-ensure_packer()
+ensure_packer(vim)
 
 -- Plugin setup
-return require('packer').startup(function()
-    use 'wbthomason/packer.nvim' -- Plugin manager
-    use {'junegunn/fzf', run = function() vim.fn['fzf#install']() end }
-    use 'junegunn/fzf.vim'
+return require('packer').startup(function(use)
     use 'tomasiser/vim-code-dark'
-
+    use 'navarasu/onedark.nvim'
+    use 'wbthomason/packer.nvim' -- Plugin manager
+    use {
+        'junegunn/fzf',
+        run = function() vim.fn['fzf#install']() end
+    }
+    use 'junegunn/fzf.vim'
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.8',
+        requires = { {'nvim-lua/plenary.nvim'} }
+    }
     use {
         'williamboman/mason.nvim',
         config = function()
@@ -27,12 +34,21 @@ return require('packer').startup(function()
         'williamboman/mason-lspconfig.nvim',
         config = function()
             require("mason-lspconfig").setup({
-                ensure_installed = { "ts_ls" },  -- Ensures tsserver is installed
+                ensure_installed = { "ts_ls", "lua_ls" },  -- Ensures tsserver is installed
                 automatic_installation = true,
             })
+
+            local lspconfig = require("lspconfig")
+            lspconfig.ts_ls.setup {}
+            lspconfig.lua_ls.setup {}
         end
+    }
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = { 'nvim-tree/nvim-web-devicons', opt = true }
     }
 
     use 'neovim/nvim-lspconfig' -- LSP configurations
+
 end)
 

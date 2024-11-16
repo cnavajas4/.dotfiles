@@ -7,34 +7,40 @@ vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.expandtab = true
 vim.o.smartindent = true
-vim.api.nvim_exec('language en_US', true)
-
-vim.o.foldmethod = indent
+vim.o.foldmethod = 'indent'
+-- vim.o.lan = 'en_US'
 
 -- Set leader key
 vim.g.mapleader = " "
 
 -- Key mappings
-vim.api.nvim_set_keymap('n', '<leader>pv', ':Vex<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader><CR>', ':so ~/.config/nvim/init.lua<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<C-p>', ':GFiles<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>pf', ':Files<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<C-k>', ':cnext<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<C-j>', ':cprev<CR>', { noremap = true })
+-- vim.api.nvim_set_keymap = vim.keymap.set
+local map = vim.api.nvim_set_keymap
+local opts = { noremap = true, silent = true }
+map('n', '<leader>pv', ':Vex<CR>', opts)
+map('n', '<leader><CR>', ':so ~/.config/nvim/init.lua<CR>', opts)
+map('n', '<C-p>', ':GFiles<CR>', opts)
+map('n', '<leader>pf', ':Files<CR>', opts)
+map('n', '<C-k>', ':cnext<CR>', opts)
+map('n', '<C-j>', ':cprev<CR>', opts)
+map('v', 'J', ":m '>+1<CR>gv=gv", opts)
+map('v', 'K', ":m '<-2<CR>gv=gv", opts)
+map('v', '<leader>p', '"_dP', opts)
 
-vim.api.nvim_set_keymap('v', 'J', ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', 'K', ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
+-- Yank to system clipboard
+map('v', '<leader>y', '"*y', opts)
+map('n', '<leader>y', '"*y', opts)
+map('n', '<leader>Y', 'magg"*yG`a', opts)
 
-vim.api.nvim_set_keymap('v', '<leader>p', '"_dP', { noremap = true, silent = true })
-vim.keymap.set('v', '<leader>y', '"*y', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>y', '"*y', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>Y', 'magg"*yG`a', { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap('n', '<leader>\'', '<C-^>', { noremap = true })
-
--- Load files
-require('plugins')
-require('lsp')
+-- Misc key mappings
+map('n', '<leader>nh', ':nohl<CR>', { noremap = true, silent = true })
+map('n', '<leader>\'', '<C-^>', { noremap = true })
 
 -- Set colorscheme
 vim.cmd('colorscheme codedark')
+
+-- Load Lua files
+require('plugins')
+require('lsp')
+require('statusline')
+
